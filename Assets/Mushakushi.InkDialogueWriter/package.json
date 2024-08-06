@@ -1,0 +1,15 @@
+{
+  "name": "com.mushakushi.inkdialoguewriter",
+  "version": "1.0.0",
+  "displayName": "Ink Dialogue Writer",
+  "description": "A framework for creating dialogue UI with Ink.",
+  "unity": "6000.0.5f1",
+  "keywords": [ "Inkle", "Ink", "UI", "Utility" ],
+  "dependencies": {
+  },
+  "author": {
+    "name": "Mushakushi",
+    "email": "info@mushakushi.com",
+    "url": "https://www.mushakushi.com"
+  }
+}
