@@ -9,11 +9,11 @@ Read the documentation [here](Assets/Mushakushi.YarnSpinnerUtility/README.md).
 from the Add package from git URL option, enter:
 
 ```bash
-https://github.com/Mushakushi/yarn-spinner-utility.git?path=Assets/Mushakushi.YarnSpinnerUtility
+https://github.com/mushakushi/yarn-spinner-utility.git?path=Assets/Mushakushi.YarnSpinnerUtility
 ```
 
 If you are specifying a version, append #{VERSION} to the end of the git URL. 
 
 ```bash
-https://github.com/Mushakushi/yarn-spinner-utility.git?path=Assets/Mushakushi.YarnSpinnerUtility#{VERSION}
+https://github.com/mushakushi/yarn-spinner-utility.git?path=Assets/Mushakushi.YarnSpinnerUtility#{VERSION}
 ```
