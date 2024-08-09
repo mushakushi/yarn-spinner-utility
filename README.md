@@ -1,3 +1,5 @@
+Requires [Yarn Spinner](https://openupm.com/packages/dev.yarnspinner.unity/).
+
 Read the documentation [here](Assets/Mushakushi.YarnSpinnerUtility/README.md). 
 
 ## Installation 
