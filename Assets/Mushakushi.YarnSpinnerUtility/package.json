@@ -5,8 +5,8 @@
   "description": "Utilities for Yarn Spinner.",
   "unity": "2022.3",
   "unityRelease": "5f1",
-  "documentationUrl": "https://github.com/Mushakushi/ink-dialogue-writer/blob/main/Assets/Mushakushi.InkDialogueWriter/README.md",
-  "changelogUrl": "https://github.com/Mushakushi/ink-dialogue-writer/blob/main/Assets/Mushakushi.InkDialogueWriter/CHANGELOG.md",
+  "documentationUrl": "https://github.com/Mushakushi/yarn-spinner-utility/blob/main/Assets/Mushakushi.YarnSpinnerUtility/README.md",
+  "changelogUrl": "https://github.com/Mushakushi/yarn-spinner-utility/blob/main/Assets/Mushakushi.YarnSpinnerUtility/CHANGELOG.md",
   "license": "MIT",
   "keywords": [ "Yarn Spinner", "Yarn", "Dialogue", "Utility" ],
   "author": {
