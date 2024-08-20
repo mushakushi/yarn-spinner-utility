@@ -7,29 +7,33 @@ using Yarn.Unity;
 namespace Mushakushi.YarnSpinnerUtility.Runtime
 {
     /// <summary>
-    /// Parses a yarn yarnProject into dialogue that can be handled by other classes. An improved version
-    /// of https://github.com/YarnSpinnerTool/YarnSpinner-Unity/blob/main/Samples~/Minimal%20Viable%20Dialogue%20System/Scripts/MinimalDialogueRunner.cs
+    /// Parses a yarn yarnProject into dialogue that can be handled by other classes.
     /// </summary>
-    public class MinimalDialogueRunner: MonoBehaviour
+    /// <seealso href="https://github.com/YarnSpinnerTool/YarnSpinner-Unity/blob/main/Samples~/Minimal%20Viable%20Dialogue%20System/Scripts/MinimalDialogueRunner.cs"/>
+    public class DialogueParser: MonoBehaviour
     { 
-        [SerializeField] private YarnDialogueObserver yarnDialogueObserver;
+        [SerializeField] private DialogueObserver dialogueObserver;
         [SerializeField] private YarnProject yarnProject;
         [SerializeField] private VariableStorageBehaviour variableStorageBehaviour;
         [SerializeField] private LineProviderBehaviour lineProviderBehaviour;
         private Dialogue dialogue;
+        
+#if DEBUG
+        [SerializeField] private bool verboseLogging; 
+#endif
 
         private void OnEnable()
         {
-            yarnDialogueObserver.onNodeRequested.Event += dialogue.SetNode;
-            yarnDialogueObserver.onContinueDialogue.Event += dialogue.Continue;
-            yarnDialogueObserver.onSetSelectedOption.Event += dialogue.SetSelectedOption;
+            dialogueObserver.nodeRequested.OnEvent += dialogue.SetNode;
+            dialogueObserver.continueRequested.OnEvent += dialogue.Continue;
+            dialogueObserver.optionSelected.OnEvent += dialogue.SetSelectedOption;
         }
         
         private void OnDisable()
         {
-            yarnDialogueObserver.onNodeRequested.Event -= dialogue.SetNode;
-            yarnDialogueObserver.onContinueDialogue.Event -= dialogue.Continue;
-            yarnDialogueObserver.onSetSelectedOption.Event -= dialogue.SetSelectedOption;
+            dialogueObserver.nodeRequested.OnEvent -= dialogue.SetNode;
+            dialogueObserver.continueRequested.OnEvent -= dialogue.Continue;
+            dialogueObserver.optionSelected.OnEvent -= dialogue.SetSelectedOption;
         }
 
         private void Awake()
@@ -41,25 +45,20 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
             variableStorageBehaviour.SetAllVariables(yarnProject.InitialValues);
         }
         
-        /// <summary>
-        /// https://docs.yarnspinner.dev/api/csharp/yarn/yarn.dialogue/yarn.dialogue.nodeexists
-        /// </summary>
-        public bool NodeExists(string nodeName) => dialogue.NodeExists(nodeName);
-        
         private Dialogue CreateDialogueInstance()
         {
             return new Dialogue(variableStorageBehaviour)
             {
 #if DEBUG
-                LogDebugMessage = message => Debug.Log(message, this),
-                LogErrorMessage = message => Debug.LogError(message, this),
+                LogDebugMessage = message => { if (verboseLogging) Debug.Log(message, this); },
+                LogErrorMessage = message => { if (verboseLogging) Debug.LogError(message, this); },
 #endif
                 LineHandler = HandleLine,
                 CommandHandler = HandleCommand, 
                 OptionsHandler = HandleOptionSet,
-                NodeStartHandler = yarnDialogueObserver.onNodeStarted.RaiseEvent,
-                NodeCompleteHandler = yarnDialogueObserver.onNodeCompleted.RaiseEvent,
-                DialogueCompleteHandler = yarnDialogueObserver.onDialogueCompleted.RaiseEvent,
+                NodeStartHandler = dialogueObserver.nodeStarted.RaiseEvent,
+                NodeCompleteHandler = dialogueObserver.nodeCompleted.RaiseEvent,
+                DialogueCompleteHandler = dialogueObserver.dialogueCompleted.RaiseEvent,
                 PrepareForLinesHandler = HandlePrepareForLines,
             };
         }
@@ -68,16 +67,28 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
         {
             var localizedLine = lineProviderBehaviour.GetLocalizedLine(line);
             var text = Dialogue.ExpandSubstitutions(localizedLine.RawText, line.Substitutions);
+            
+            // https://github.com/YarnSpinnerTool/YarnSpinner-Unity/blob/f25cc05c40a6cdfcdb142248c9f6f35c8a40c157/Runtime/DialogueRunner.cs#L921
+            if (text == null)
+            {
+                Debug.LogWarning($"Dialogue Runner couldn't expand substitutions in Yarn Project [{ yarnProject.name }] node [{ dialogue.CurrentNode }] " 
+                                 + $"with line ID [{ localizedLine.TextID }]. "
+                                 + "This usually happens because it couldn't find text in the Localization. The line may not be tagged properly. "
+                                 + "Try re-importing this Yarn Program. "
+                                 + "For now, Dialogue Runner will swap in CurrentLine.RawText.");
+                text = localizedLine.RawText;
+            }
+            
             dialogue.LanguageCode = lineProviderBehaviour.LocaleCode;
             localizedLine.Text = dialogue.ParseMarkup(text);
             
-            yarnDialogueObserver.onOutputLineRequested.RaiseEvent(localizedLine);
+            dialogueObserver.lineParsed.RaiseEvent(localizedLine);
         }
 
         private void HandleCommand(Command command)
         {
             var commandElements = DialogueRunner.SplitCommandText(command.Text).ToArray(); 
-            yarnDialogueObserver.onHandleCommandRequested.RaiseEvent(commandElements);
+            dialogueObserver.commandParsed.RaiseEvent(commandElements);
         }
 
         private void HandleOptionSet(OptionSet optionSet)
@@ -99,7 +110,7 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
                 };
             }
             
-            yarnDialogueObserver.onOutputDialogueOptionsRequested.RaiseEvent(dialogueOptions);
+            dialogueObserver.optionsParsed.RaiseEvent(dialogueOptions);
         }
 
         private void HandlePrepareForLines(IEnumerable<string> lineIDs)
@@ -107,7 +118,7 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
             var lineIDsCopy = lineIDs as string[] ?? lineIDs.ToArray();
             lineProviderBehaviour.PrepareForLines(lineIDsCopy);
             
-            yarnDialogueObserver.onPrepareForLines.RaiseEvent(lineIDsCopy);
+            dialogueObserver.linesPrepared.RaiseEvent(lineIDsCopy);
         }
     }
 }
