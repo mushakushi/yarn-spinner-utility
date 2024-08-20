@@ -25,7 +25,7 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime.Output
         {
             foreach (var instantiatedDialogueOption in instantiatedDialogueOptions)
             {
-                dialogueOptionFactory.DestroyDialogueOption(instantiatedDialogueOption);
+                dialogueOptionFactory.Dispose(instantiatedDialogueOption);
             }
         }
 
@@ -34,7 +34,7 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime.Output
             instantiatedDialogueOptions = new GameObject[dialogueOptions.Length];
             for (var i = 0; i < dialogueOptions.Length; i++)
             {
-                instantiatedDialogueOptions[i] = dialogueOptionFactory.CreateDialogueOption(dialogueOptions[i]);
+                instantiatedDialogueOptions[i] = dialogueOptionFactory.Create(dialogueOptions[i]);
             }
         }
     }

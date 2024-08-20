@@ -14,7 +14,7 @@ namespace Mushakushi.YarnSpinnerUtility.Samples.Demo
         [SerializeField] private GameObject prefab;
         [SerializeField] private GameObject dialogueOptionParent;
 
-        public GameObject CreateDialogueOption(DialogueOption dialogueOption)
+        public GameObject Create(DialogueOption dialogueOption)
         {
             // this code makes a lot of assumptions about the components in the prefab, which is generally something you shouldn't do.
             var instance = Object.Instantiate(prefab, dialogueOptionParent.transform, false);
@@ -26,7 +26,7 @@ namespace Mushakushi.YarnSpinnerUtility.Samples.Demo
             return instance;
         }
 
-        public void DestroyDialogueOption(GameObject dialogueOption)
+        public void Dispose(GameObject dialogueOption)
         {
             Object.Destroy(dialogueOption);
         }
