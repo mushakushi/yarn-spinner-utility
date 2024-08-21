@@ -36,6 +36,10 @@ Uses a `RaisableEvent` custom class which you can subscribe to each event using 
 and raise the event using `Callback.RaiseEvent(params)`. You can raise and handle these events however you'd like, and 
 some are automatically called by the `DialogueParser`.
 
+### Lines & Options Output
 For the recommended setup for displaying dialogue lines and options, see the `OptionOutputController` and 
 `LineOutputController` classes, respectively.
+
+### Command Handling
+You can handle commands as you'd usually do by using `YarnCommandController.AddCommandHandler`.
 

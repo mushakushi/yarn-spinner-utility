@@ -17,6 +17,7 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
         [SerializeField] private VariableStorageBehaviour variableStorageBehaviour;
         [SerializeField] private LineProviderBehaviour lineProviderBehaviour;
         private Dialogue dialogue;
+        private bool canContinueDialogue; 
         
 #if DEBUG
         [SerializeField] private bool verboseLogging; 
@@ -24,20 +25,22 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
 
         private void OnEnable()
         {
-            dialogueObserver.nodeRequested.OnEvent += dialogue.SetNode;
-            dialogueObserver.continueRequested.OnEvent += dialogue.Continue;
-            dialogueObserver.optionSelected.OnEvent += dialogue.SetSelectedOption;
+            dialogueObserver.nodeRequested.OnEvent += HandleSetNode;
+            dialogueObserver.continueRequested.OnEvent += HandleContinueRequested;
+            dialogueObserver.optionSelected.OnEvent +=  HandleSetSelectedOption;
         }
         
         private void OnDisable()
         {
-            dialogueObserver.nodeRequested.OnEvent -= dialogue.SetNode;
-            dialogueObserver.continueRequested.OnEvent -= dialogue.Continue;
-            dialogueObserver.optionSelected.OnEvent -= dialogue.SetSelectedOption;
+            dialogueObserver.nodeRequested.OnEvent -= HandleSetNode;
+            dialogueObserver.continueRequested.OnEvent -= HandleContinueRequested;
+            dialogueObserver.optionSelected.OnEvent -= HandleSetSelectedOption;
         }
 
         private void Awake()
         {
+            canContinueDialogue = true;
+            
             dialogue = CreateDialogueInstance();
             dialogue.SetProgram(yarnProject.Program);
             lineProviderBehaviour.YarnProject = yarnProject;
@@ -54,13 +57,25 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
                 LogErrorMessage = message => { if (verboseLogging) Debug.LogError(message, this); },
 #endif
                 LineHandler = HandleLine,
-                CommandHandler = HandleCommand, 
+                CommandHandler = command => { dialogueObserver.commandParsed.RaiseEvent(command); }, // will not pause dialogue using method group 
                 OptionsHandler = HandleOptionSet,
                 NodeStartHandler = dialogueObserver.nodeStarted.RaiseEvent,
                 NodeCompleteHandler = dialogueObserver.nodeCompleted.RaiseEvent,
                 DialogueCompleteHandler = dialogueObserver.dialogueCompleted.RaiseEvent,
                 PrepareForLinesHandler = HandlePrepareForLines,
             };
+        }
+
+        private void HandleSetNode(string nodeName)
+        {
+            if (!dialogue.NodeExists(nodeName)) return;
+            dialogue.SetNode(nodeName);
+        }
+
+        private void HandleContinueRequested()
+        {
+            if (!canContinueDialogue) return;
+            dialogue.Continue();
         }
 
         private void HandleLine(Line line)
@@ -85,12 +100,6 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
             dialogueObserver.lineParsed.RaiseEvent(localizedLine);
         }
 
-        private void HandleCommand(Command command)
-        {
-            var commandElements = DialogueRunner.SplitCommandText(command.Text).ToArray(); 
-            dialogueObserver.commandParsed.RaiseEvent(commandElements);
-        }
-
         private void HandleOptionSet(OptionSet optionSet)
         {
             var dialogueOptions = new DialogueOption[optionSet.Options.Length];
@@ -109,8 +118,15 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
                     IsAvailable = optionSet.Options[i].IsAvailable,
                 };
             }
-            
+
+            canContinueDialogue = false;
             dialogueObserver.optionsParsed.RaiseEvent(dialogueOptions);
+        }
+
+        private void HandleSetSelectedOption(int optionID)
+        {
+            canContinueDialogue = true;
+            dialogue.SetSelectedOption(optionID);
         }
 
         private void HandlePrepareForLines(IEnumerable<string> lineIDs)

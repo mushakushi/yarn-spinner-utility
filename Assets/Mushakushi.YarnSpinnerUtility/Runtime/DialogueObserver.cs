@@ -34,14 +34,20 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime
         public RaisableEvent<LocalizedLine> lineParsed;
         
         /// <summary>
-        /// Callback on encountering a parsed <see cref="Command"/>'s elements.
+        /// Callback on encountering a parsed <see cref="Command"/>.
         /// </summary>
         /// <remarks>
         /// Raised automatically by a <see cref="DialogueParser"/>. The first element 
         /// <see href="https://github.com/YarnSpinnerTool/YarnSpinner-Unity/blob/f25cc05c40a6cdfcdb142248c9f6f35c8a40c157/Runtime/DialogueRunner.cs#L852">
         /// is always the command name</see>.
         /// </remarks>
-        public RaisableEvent<string[]> commandParsed;
+        public RaisableEvent<Command> commandParsed;
+
+        /// <summary>
+        /// Callback on a command being handled. 
+        /// </summary>
+        /// <seealso cref="commandParsed"/>
+        public RaisableEvent commandHandled; 
 
         /// <summary>
         /// Callback on encountering <see cref="DialogueOption">DialogueOptions</see>
