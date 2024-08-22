@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 
 namespace Mushakushi.YarnSpinnerUtility.Runtime.Commands
 {
@@ -9,25 +8,12 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime.Commands
     {
         private readonly Dictionary<TKey, Delegate> commandHandlers = new();
 
-        public void DispatchCommand(TKey key, params object[] parameters)
+        public bool TryDispatchCommand(TKey key, params object[] parameters)
         {
-            if (!commandHandlers.TryGetValue(key, out var commandHandler))
-            {
-#if DEBUG
-                Debug.LogError($"Command {key} is not registered");
-#endif
-                return;
-            }
-
-            if (!IsMethodCallableWithParameters(commandHandler.Method, parameters))
-            {
-#if DEBUG
-                Debug.LogError($"Command {key} is not method callable with parameters {string.Join(", ", parameters)} ({commandHandler.Method.Name})");
-#endif
-                return;
-            }
-            
+            if (!commandHandlers.TryGetValue(key, out var commandHandler)) return false;
+            if (!IsMethodCallableWithParameters(commandHandler.Method, parameters)) return false;
             commandHandler.DynamicInvoke(parameters);
+            return true;
         }
 
         public void AddCommandHandler(TKey key, Delegate commandHandler)

@@ -27,7 +27,7 @@ namespace Mushakushi.YarnSpinnerUtility.Runtime.Commands
             if (commandElements.Length == 0) return;
             var commandName = commandElements.ElementAtOrDefault(0);
             var commandArguments = commandElements.Length == 1 ? null : ParseValues(commandElements[1..]);
-            commandDispatcher.DispatchCommand(commandName, commandArguments);
+            commandDispatcher.TryDispatchCommand(commandName, commandArguments);
         }
         
         private static object[] ParseValues(string[] values)

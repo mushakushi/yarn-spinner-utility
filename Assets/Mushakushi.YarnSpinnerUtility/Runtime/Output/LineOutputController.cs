@@ -1,37 +1,56 @@
+using System;
+using System.Threading;
 using UnityEngine;
 using Yarn.Unity;
 
 namespace Mushakushi.YarnSpinnerUtility.Runtime.Output
 {
-    /// <summary>
-    /// Outputs dialogue body and character name output from a <see cref="LocalizedLine"/>.
-    /// </summary>
     public class LineOutputController: MonoBehaviour
     {
         [SerializeField] private DialogueObserver dialogueObserver;
-        [SerializeField] private bool showCharacterName;
-        [SerializeReference, SubclassSelector] private ITextOutput characterNameOutput;
-        [SerializeReference, SubclassSelector] private ITextOutput dialogueBodyOutput;
-        
-        private void OnEnable()
+        [SerializeReference, SubclassSelector] private ILayoutElementAsync[] layoutElements;
+        private CancellationTokenSource cancellationTokenSource = new();
+
+        public void OnEnable()
         {
-            dialogueObserver.lineParsed.OnEvent += OutputLine;
+            dialogueObserver.lineParsed.OnEvent += HandleLineParsed;
+            dialogueObserver.dialogueCompleted.OnEvent += HandleDialogueCompleted;
         }
 
         private void OnDisable()
         {
-            dialogueObserver.lineParsed.OnEvent -= OutputLine;
+            dialogueObserver.lineParsed.OnEvent -= HandleLineParsed;
+            dialogueObserver.dialogueCompleted.OnEvent -= HandleDialogueCompleted;
         }
         
-        private void OutputLine(LocalizedLine localizedLine)
+        private void HandleLineParsed(LocalizedLine localizedLine)
         {
-            var text = localizedLine.Text.Text;
-            if (showCharacterName)
+            RefreshTokenAndExecuteLayoutOperation(element => element.RecalculateLayout(localizedLine, cancellationTokenSource.Token));
+        }
+        
+        private void HandleDialogueCompleted()
+        {
+            RefreshTokenAndExecuteLayoutOperation(element => element.RemoveLayout(cancellationTokenSource.Token));
+        }
+
+        private void RefreshTokenAndExecuteLayoutOperation(Func<ILayoutElementAsync, Awaitable> awaitable)
+        {
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource = new CancellationTokenSource();
+            
+            _ = ExecuteLayoutOperation(awaitable);
+        }
+
+        private async Awaitable ExecuteLayoutOperation(Func<ILayoutElementAsync, Awaitable> awaitable)
+        {
+            try
             {
-                characterNameOutput?.Write(localizedLine.CharacterName);
-                text = localizedLine.TextWithoutCharacterName.Text;
+                foreach (var layoutElement in layoutElements)
+                {
+                    await awaitable(layoutElement);
+                }
             }
-            dialogueBodyOutput.Write(text);
+            catch (OperationCanceledException) { }
         }
     }
 }

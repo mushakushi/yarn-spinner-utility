@@ -21,8 +21,8 @@ If you are specifying a version, append #{VERSION} to the end of the git URL.
 ```bash
 https://github.com/mushakushi/yarn-spinner-utility.git?path=Assets/Mushakushi.YarnSpinnerUtility#{VERSION}
 ```
-### Dependencies
-* https://openupm.com/packages/com.mackysoft.serializereference-extensions/
+### Git Dependencies
+* https://github.com/ayellowpaper/SerializedDictionary.git
 
 ## 🚀 Usage
 
@@ -40,6 +40,36 @@ some are automatically called by the `DialogueParser`.
 For the recommended setup for displaying dialogue lines and options, see the `OptionOutputController` and 
 `LineOutputController` classes, respectively.
 
+### Line Output Controller
+Modify its `layoutElements` in the inspector, which is recalculated on each dialogue line and removed when the dialogue is completed.
+Each layout `ILayoutElementAsync` callback is asynchronously and sequentially executed as they appear in the collection. 
+
+You can create a new layout element by marking
+any class that inherits from `ILayoutElementAsync` with the `[System.Serializable]` attribute.
+
+```csharp
+[System.Serializable] public class LayoutElementAsync: ILayoutElementAsync
+```
+
 ### Command Handling
 You can handle commands as you'd usually do by using `YarnCommandController.AddCommandHandler`.
 
+```csharp
+public class ExampleCommandHandler: MonoBehaviour
+{
+    [SerializeField] private DialogueObserver dialogueObserver;
+    [SerializeField] private YarnCommandController commandController;
+
+    private void Start()
+    {
+        commandController.AddCommandHandler<float>("wait", HandleWaitCommand);
+    }
+
+    private void HandleWaitCommand(float waitDuration)
+    {
+        // handle the command (note: this can be asynchronous) 
+        // then let the dialogue know that the command was handled.
+        dialogueObserver.commandHandled.RaiseEvent();
+    }
+}
+```

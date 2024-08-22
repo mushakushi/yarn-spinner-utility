@@ -127,8 +127,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8639987}
-  - component: {fileID: 8639988}
   - component: {fileID: 8639989}
+  - component: {fileID: 8639990}
   m_Layer: 0
   m_Name: Dialogue Output
   m_TagString: Untagged
@@ -151,35 +151,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8639988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8639986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac41ccd48b274f689e1e1919ccd31dc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dialogueObserver: {fileID: 11400000, guid: b5845eb5cb7a19e41951f0a810a1e6fb, type: 2}
-  showCharacterName: 1
-  characterNameOutput:
-    rid: 4183981942278455354
-  dialogueBodyOutput:
-    rid: 4183981942278455355
-  references:
-    version: 2
-    RefIds:
-    - rid: 4183981942278455354
-      type: {class: TextOutputTMPro, ns: Mushakushi.YarnSpinnerUtility.Samples.Demo, asm: Assembly-CSharp}
-      data:
-        text: {fileID: 1716012445}
-    - rid: 4183981942278455355
-      type: {class: TextOutputTMPro, ns: Mushakushi.YarnSpinnerUtility.Samples.Demo, asm: Assembly-CSharp}
-      data:
-        text: {fileID: 814688709}
 --- !u!114 &8639989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,6 +175,33 @@ MonoBehaviour:
         dialogueObserver: {fileID: 11400000, guid: b5845eb5cb7a19e41951f0a810a1e6fb, type: 2}
         prefab: {fileID: 6279463429807614479, guid: 518e9d9eeee13fb488520aada85631fb, type: 3}
         dialogueOptionParent: {fileID: 312847924}
+--- !u!114 &8639990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8639986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b8515a69dc549fe96d50190846ded25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueObserver: {fileID: 11400000, guid: b5845eb5cb7a19e41951f0a810a1e6fb, type: 2}
+  layoutElements:
+  - rid: 4183981983442403559
+  - rid: 4183981983442403560
+  references:
+    version: 2
+    RefIds:
+    - rid: 4183981983442403559
+      type: {class: CharacterNameOutput, ns: Mushakushi.YarnSpinnerUtility.Samples.Demo, asm: Assembly-CSharp}
+      data:
+        text: {fileID: 1716012445}
+    - rid: 4183981983442403560
+      type: {class: DialogueBodyOutput, ns: Mushakushi.YarnSpinnerUtility.Samples.Demo, asm: Assembly-CSharp}
+      data:
+        text: {fileID: 814688709}
 --- !u!1 &263249546
 GameObject:
   m_ObjectHideFlags: 0
