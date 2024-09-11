@@ -13,13 +13,13 @@ and tightly coupled.
 from the Add package from git URL option, enter:
 
 ```bash
-https://github.com/mushakushi/yarn-spinner-utility.git?path=Assets/Mushakushi.YarnSpinnerUtility
+https://github.com/mushakushi/yarn-spinner-utility.git?path=Assets/YarnSpinnerUtility
 ```
 
 If you are specifying a version, append #{VERSION} to the end of the git URL. 
 
 ```bash
-https://github.com/mushakushi/yarn-spinner-utility.git?path=Assets/Mushakushi.YarnSpinnerUtility#{VERSION}
+https://github.com/mushakushi/yarn-spinner-utility.git?path=Assets/YarnSpinnerUtility#{VERSION}
 ```
 ### Git Dependencies
 * https://github.com/ayellowpaper/SerializedDictionary.git
