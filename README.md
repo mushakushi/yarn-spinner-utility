@@ -31,45 +31,41 @@ A modified version of Yarn's [Minimal Dialogue Runner](https://github.com/YarnSp
 using the Scriptable Object observer pattern and makes no assumptions about how the game will be run.
 Because of this, it can work across scenes using a `DialogueObserver`.
 
-### Dialogue Observer
-Uses a `RaisableEvent` custom class which you can subscribe to each event using `Callback.Event`
-and raise the event using `Callback.RaiseEvent(params)`. You can raise and handle these events however you'd like, and 
-some are automatically called by the `DialogueParser`.
+### View Controllers
+For the recommended setup for displaying dialogue lines and options, see the `OptionViewController` and 
+`LineViewController` classes, respectively.
 
-### Lines & Options Output
-For the recommended setup for displaying dialogue lines and options, see the `OptionOutputController` and 
-`LineOutputController` classes, respectively.
+### Views
+Modify its `views` in the inspector, which is recalculated on each dialogue line and removed when the dialogue is completed.
 
-### Line Output Controller
-Modify its `layoutElements` in the inspector, which is recalculated on each dialogue line and removed when the dialogue is completed.
-Each layout `ILayoutElementAsync` callback is asynchronously and sequentially executed as they appear in the collection. 
-
-You can create a new layout element by marking
-any class that inherits from `ILayoutElementAsync` with the `[System.Serializable]` attribute.
+You can create a new view by marking
+any class that inherits from `IView` with the `[System.Serializable]` attribute.
 
 ```csharp
-[System.Serializable] public class LayoutElementAsync: ILayoutElementAsync
+[System.Serializable] public class View: IView
 ```
 
 ### Command Handling
-You can handle commands as you'd usually do by using `YarnCommandController.AddCommandHandler`.
+You can handle commands as you'd usually do by using `YarnCommandDispatcher.AddCommandHandler`.
+The dialogue is must be continued manually after the command is handled.
 
 ```csharp
 public class ExampleCommandHandler: MonoBehaviour
 {
-    [SerializeField] private DialogueObserver dialogueObserver;
-    [SerializeField] private YarnCommandController commandController;
+    [SerializeField] private YarnCommandDispatcher commandDispatcher;
 
     private void Start()
     {
-        commandController.AddCommandHandler<float>("wait", HandleWaitCommand);
+        // Please note that the "wait" command is the only command
+        // that is handled for you. 
+        commandDispatcher.AddCommandHandler<float>("wait", HandleWaitCommand);
     }
 
     private void HandleWaitCommand(float waitDuration)
     {
-        // handle the command (note: this can be asynchronous) 
-        // then let the dialogue know that the command was handled.
-        dialogueObserver.commandHandled.RaiseEvent();
+        // handle the command ...
+        // the continue the dialogue (note: this can be done asynchronously)
+        commandDispatcher.dialogueParser.TryContinue();
     }
 }
 ```

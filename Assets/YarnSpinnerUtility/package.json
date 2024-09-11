@@ -1,0 +1,24 @@
+{
+  "name": "com.mushakushi.yarnspinnerutility",
+  "version": "0.0.0",
+  "displayName": "Yarn Spinner Utility",
+  "description": "Utilities for Yarn Spinner.",
+  "unity": "2023.1",
+  "unityRelease": "5f1",
+  "documentationUrl": "https://github.com/mushakushi/yarn-spinner-utility/blob/main/README.md",
+  "changelogUrl": "https://github.com/mushakushi/yarn-spinner-utility/blob/main/Assets/Mushakushi.YarnSpinnerUtility/CHANGELOG.md",
+  "license": "MIT",
+  "keywords": [ "Yarn Spinner", "Yarn", "Dialogue", "Utility" ],
+  "author": {
+    "name": "Mushakushi",
+    "email": "info@mushakushi.com",
+    "url": "https://www.mushakushi.com"
+  },
+  "samples": [
+    {
+      "displayName": "Demo",
+      "description": "An example setup using TMPro",
+      "path": "Samples~/Demo"
+    }
+  ]
+}
