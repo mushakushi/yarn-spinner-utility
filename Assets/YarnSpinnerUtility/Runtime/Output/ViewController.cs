@@ -14,6 +14,11 @@ namespace YarnSpinnerUtility.Runtime.Output
         /// Whether the view is updating. 
         /// </summary>
         private bool isViewUpdating;
+
+        /// <summary>
+        /// Whether the view is initialized or has reinitialized after clearing.
+        /// </summary>
+        public bool IsActive { get; private set; }
         
         public event Action OnViewUpdated;
         public event Action OnViewCleared;
@@ -26,6 +31,7 @@ namespace YarnSpinnerUtility.Runtime.Output
         protected void InitializeAllViews()
         {
             foreach (var view in views) view.Initialize();
+            IsActive = true;
         }
         
         protected async Awaitable UpdateAllViews(T args)
@@ -47,6 +53,7 @@ namespace YarnSpinnerUtility.Runtime.Output
         protected void ClearAllViews()
         {
             foreach (var view in views) view.Clear();
+            IsActive = false;
             OnViewCleared?.Invoke();
         }
 
