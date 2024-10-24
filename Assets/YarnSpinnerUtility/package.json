@@ -1,6 +1,6 @@
 {
   "name": "com.mushakushi.yarnspinnerutility",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Yarn Spinner Utility",
   "description": "Utilities for Yarn Spinner.",
   "unity": "6000.0",
