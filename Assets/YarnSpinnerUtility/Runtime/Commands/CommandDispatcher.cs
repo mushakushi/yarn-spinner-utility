@@ -52,6 +52,7 @@ namespace YarnSpinnerUtility.Runtime.Commands
         private static bool IsMethodCallableWithParameters(MethodInfo method, object[] parameters)
         {
             var methodParameters = method.GetParameters();
+            if (methodParameters.Length == 0) return parameters == null || parameters.Length == 0;
             if (methodParameters.Length != parameters.Length) return false; 
             
             for (var i = 0; i < methodParameters.Length; i++)
